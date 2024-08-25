@@ -3,6 +3,7 @@ library(gtsummary)
 
 ikea <-read_csv (here::here("data","ikea.csv")) %>%
   select (-...1) |>
+  na.omit (ikea) |>
 mutate(sellable_online_cat = factor(sellable_online, labels = c ("Yes", "No")),
        other_colors_cat = factor (other_colors, labels = c("Yes","No")),
        category2 = factor (category, labels = c("Bar furniture","Beds",
@@ -25,8 +26,16 @@ tbl_uvregression(
   method = lm
 )
 
+#Histogram
+hist(ikea$price)
 
-            
+#Create New Function, set default in case values are not available
+dimensions <- function(depth ,height ,width ) {
+  depth * height * width
+}
+#test
+dimensions (ikea$depth, ikea$height, ikea$width)
+  
                 
 
 
