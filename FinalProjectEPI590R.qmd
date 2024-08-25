@@ -1,0 +1,73 @@
+---
+title: "Final Project EPI 190R"
+author: "Olivia Christman"
+format: html
+execute:
+  echo: false
+---
+
+
+```{r}
+#| echo: false
+#| output: false 
+library(tidyverse)
+library(gtsummary)
+
+ikea <-read_csv (here::here("data","ikea.csv")) %>%
+  select (-...1) |>
+  na.omit (ikea) |>
+mutate(sellable_online_cat = factor(sellable_online, labels = c ("Yes", "No")),
+       other_colors_cat = factor (other_colors, labels = c("Yes","No")),
+       category2 = factor (category, labels = c("Bar furniture","Beds",
+                    "Bookcases & shelving units","Cabinets & cupboards",
+                      "Cafe furniture", "Chairs", "Chests of drawers & drawer units", "Children's furniture", "Nursery furniture", "Outdoor Furniture", "Room dividers","Sideboards, buffets & console tables", "Sofas & armchairs", "Tables & desks","Trolleys", "TV & media furniture", "Wardrobes"))) 
+  
+```
+
+This Dataset describes Ikea Furniture and was found on Kaggle and was created using Ikeas website. @tbl-one describes the categories of furniture, price, and availability.
+
+```{r}
+#| label: tbl-one
+#| tbl-cap: "Descriptive Statistics"
+table1 <-tbl_summary(
+      ikea,
+      include = c(category2, price, sellable_online_cat, other_colors_cat),
+      label = list(
+       category2 ~ "Furniture type",
+       price ~ "Price",
+      sellable_online_cat ~ "Available for sale online",
+      other_colors_cat ~ "Available in another color"
+      ),
+  missing_text = "Missing"
+  )
+table1
+```
+
+```{r}
+#| output: false
+inline_text(table1, variable =  "price", column = "stat_0")
+
+stats <- list(n=nrow(ikea),
+              mean_height = mean(ikea$height))
+```
+
+Their is a total of `r stats$n` pieces of furniture included in this dataset with median and (Q1, Q3) price of (`r inline_text ( table1, variable =  "price", column = "stat_0")`). The average height of a piece of ikea furniture is `r stats$mean_height`. @tbl-two below is univariate regression of how furniture type, availability online, and availability of color is associated with price. 
+
+```{r}
+#| label: tbl-two
+#| tbl-cap: Linear Regression of Price 
+regression <- tbl_uvregression(
+         ikea,
+         y = price,
+         include = c(category2, sellable_online_cat, other_colors_cat),
+         method = lm
+)
+regression
+```
+
+@fig-hist shows a graph of Ikea furniture prices
+``` {r}
+#| label: fig-hist
+#| fig-cap: Historgram of Price of Furniture
+hist(ikea$price)
+```
