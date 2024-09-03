@@ -12,6 +12,8 @@ execute:
 #| output: false 
 library(tidyverse)
 library(gtsummary)
+library(readr)
+library(here)
 
 ikea <-read_csv (here::here("data","ikea.csv")) %>%
   select (-...1) |>
@@ -69,5 +71,16 @@ regression
 ``` {r}
 #| label: fig-hist
 #| fig-cap: Historgram of Price of Furniture
-hist(ikea$price)
+
+p <- ggplot(ikea, aes(x=price)) + geom_histogram()
+
+p
+```
+
+```{r}
+#| output: false
+#Save Histogram
+ggsave(plot = p,
+       filename= here::here("Documents","fig.pdf"))
+
 ```
